@@ -1,6 +1,9 @@
 <template>
   <div class="charter vcomp">
-    <Bar
+    <div class="run" @click.stop="run">차트 불러오기</div>
+
+    <Line
+      v-if="state.prices.length > 0"
       :chart-options="state.chartOptions"
       :chart-data="state.chartData"
       :chart-id="chartId"
@@ -17,23 +20,47 @@
 <script>
 import { 
   reactive, 
-  onMounted
+  onMounted,
+  computed,
 } from 'vue';
 
-// import Plotly from 'plotly.js-dist-min'
-import { Bar } from 'vue-chartjs'
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
+import { 
+  // Bar, 
+  Line 
+} from 'vue-chartjs'
 
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
+// import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  LineElement,
+  LinearScale,
+  PointElement,
+  CategoryScale,
+  // Plugin
+} from 'chart.js'
 
+// ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
+
+ChartJS.register(
+  Title,
+  Tooltip,
+  Legend,
+  LineElement,
+  LinearScale,
+  PointElement,
+  CategoryScale
+)
 
 export default {
   name: 'Charter',
-  components: { Bar },
+  components: { Line },
   props: {
     chartId: {
       type: String,
-      default: 'bar-chart'
+      default: 'line-chart'
     },
     datasetIdKey: {
       type: String,
@@ -48,7 +75,7 @@ export default {
       default: 400
     },
     cssClasses: {
-      default: '',
+      default: 'container',
       type: String
     },
     styles: {
@@ -57,41 +84,139 @@ export default {
     },
     plugins: {
       type: Array,
-      default: () => []
+      default: () => [
+        // {
+        //   id: 'custom_canvas_background_color',
+        //   beforeDraw: (chart) => {
+        //     const {ctx} = chart;
+        //     ctx.save();
+        //     ctx.globalCompositeOperation = 'destination-over';
+        //     ctx.fillStyle = '#3492ff';
+        //     ctx.fillRect(0, 0, chart.width, chart.height);
+        //     ctx.restore();
+        //   }
+        // }
+      ]
     }
   },
 
   setup() {
     const state = reactive({
-      chartData: {
-        labels: [ 'January', 'February', 'March' ],
-        datasets: [ { data: [40, 20, 12] } ]
-      },
+      chartData: computed(() => {
+        return {
+          datasets: [
+            {
+              label: 'price',
+              data: state.prices,
+              parsing: {
+                xAxisKey: 'localDate',
+                yAxisKey: 'closePrice'
+              },
+              borderColor: 'black',
+            }
+          ]
+        }
+      }),
+
       chartOptions: {
-        responsive: true
-      }
+        responsive: true,
+        // borderWidth: 5,
+        borderWidth: 5,
+        // pointRadius: 5,
+        pointRadius: 0,
+        pointBackgroundColor: 'white',
+        // pointBorderColor: 'white',
+        // pointBorderWidth: 1
+        tension: 0.1,
+
+        scales: {
+          y: {
+            display: false,
+            beginAtZero: false,
+            // grid: { display: false },
+            // ticks: {display: false }
+          },
+          x: {
+            display: false,
+            grid: { display: false }
+          }
+        },
+        layout: {
+          padding: {
+            left: 0,
+            right: 20,
+            top: 20,
+            bottom: 20
+          }
+        },
+        plugins: {
+          legend: {
+            // title: {
+            //   color: 'red'
+            // },
+            labels: {
+              boxHeight: 1,
+              boxWidth: 20,
+              color: 'black',
+              font: { size: 20 }
+            }
+          }
+        }
+      },
+
+      code: '005930',
+      startDate: '20220101',
+      endDate: '20220817',
+      prices: [],
+      url: computed(() => {
+        return `/api/chart/domestic/item/${state.code}/day?startDateTime=${state.startDate}&endDateTime=${state.endDate}`
+      })
     });
 
 
     onMounted(() => {
-      const data = [
-        {
-          x: ['2013-10-04', '2013-11-04', '2013-12-04'],
-          y: [1, 3, 6],
-          type: 'scatter'
-        }
-      ];
-
-      Plotly.newPlot("gd", data);
     })
+
+    const run = () => {
+      fetch(state.url).then(x => x.json()).then(x => {
+        state.prices.push(...x);
+        // console.log(x);
+        // state.chartData.datasets[0].data.push(...x);
+      })
+    }
 
     return {
       state,
+      run
     }
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
+
 <style scoped>
+.charter.vcomp {
+  padding-top: 20px;
+}
+
+.charter.vcomp > .run {
+  width: calc(100% - 40px);
+  height: 60px;
+  margin: 0 auto 20px auto;
+  background: black;
+  line-height: 60px;
+  border-radius: 10px;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.charter.vcomp > .container {
+    width: calc(100% - 40px);
+    width: 100%;
+    margin: auto;
+    background: rgba(0, 0, 0, 0.05);
+    /* border-radius: 10px; */
+    overflow: hidden;
+}
 </style>

@@ -1,13 +1,11 @@
 <template>
   <MasterHead/>
-  <!-- <ChartCompare/> -->
   <Stockpicker/>
   <Charter/>
 </template>
 
 <script>
 import MasterHead from './components/MasterHead.vue';
-// import ChartCompare from './components/ChartCompare.vue';
 import Stockpicker from './components/Stockpicker.vue';
 import Charter from './components/Charter.vue';
 
@@ -15,7 +13,6 @@ export default {
   name: 'App',
   components: {
     MasterHead,
-    // ChartCompare,
     Stockpicker,
     Charter
 }

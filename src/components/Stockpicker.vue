@@ -140,7 +140,7 @@ export default {
   line-height: 60px;
   text-indent: 20px;
   outline: 0;
-  border: 1px solid black;
+  border: 5px solid black;
   padding: 0;
   box-sizing: border-box;
   border-radius: 10px;
@@ -158,7 +158,7 @@ export default {
 .stockpicker.vcomp.focused > .search_input > input {
   box-shadow: 0 0 100px rgb(0, 0, 0, 0.5);
   border: 0;
-  outline: 5px solid #3492ff;
+  border: 5px solid #3492ff;
   color: #3492ff;
 }
 

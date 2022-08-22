@@ -21,7 +21,8 @@ export default {
   top: 0;
   width: 100%;
   height: 250px;
-  background: #3492ff;
+  background: black;
+  /* background: #3492ff; */
   color: white;
   display: flex;
   justify-content: flex-end;
