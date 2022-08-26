@@ -5,6 +5,9 @@ module.exports = defineConfig({
   lintOnSave:false,
 
   devServer: {
+    // port: 80,
+    // host: '0.0.0.0',
+
     // https://soraji.github.io/vue/2021/06/05/%EA%B3%B5%EA%B3%B5%EB%8D%B0%EC%9D%B4%ED%84%B0cors/
     proxy: {
       '/': {

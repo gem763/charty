@@ -1,5 +1,5 @@
 {
-  "name": "charty",
+  "name": "chartking",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -11,8 +11,10 @@
     "chart.js": "^3.9.1",
     "core-js": "^3.8.3",
     "fuse.js": "^6.6.2",
+    "google-trends-api": "^4.9.2",
     "lodash": "^4.17.21",
-    "vue": "^3.2.13",
+    "pinia": "^2.0.20",
+    "vue": "^3.2.37",
     "vue-chartjs": "^4.1.1"
   },
   "devDependencies": {
