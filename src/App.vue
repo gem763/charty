@@ -1,22 +1,20 @@
 <template>
   <MasterHead/>
-  <!-- <Stockpicker/> -->
   <Charter/>
 </template>
 
-<script>
+<script setup>
 import MasterHead from './components/MasterHead.vue';
-// import Stockpicker from './components/Stockpicker.vue';
 import Charter from './components/Charter.vue';
 
-export default {
-  name: 'App',
-  components: {
-    MasterHead,
-    // Stockpicker,
-    Charter
-}
-}
+// export default {
+//   name: 'App',
+//   components: {
+//     MasterHead,
+//     // Charter,
+//     SearchKeywords
+// }
+// }
 </script>
 
 <style>

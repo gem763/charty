@@ -2,19 +2,19 @@
     <div class="stockpicker vcomp" :class="state.status">
         <div class="backdrop" @click.stop="focused(false)"></div>
         <div class="search_input">
-        <input 
-            v-model.trim="state.qry" 
-            spellcheck="false"
-            @input="debounced_search"
-            @focus="focused(true)"
-            placeholder="종목명 또는 종목코드" />
+            <input 
+                v-model.trim="state.qry" 
+                spellcheck="false"
+                @input="debounced_search"
+                @focus="focused(true)"
+                placeholder="종목명 또는 종목코드" />
 
-        <div class="result" v-if="state.search_result.length > 0">
-            <div class="item" v-for="(r, idx) in state.search_result" :key="idx" @click="choose(r.item)">
-            <div class="code">{{ r.item.itemCode }}</div>
-            <div class="name">{{ r.item.stockName }}</div>
+            <div class="result" v-if="state.search_result.length > 0">
+                <div class="item" v-for="(r, idx) in state.search_result" :key="idx" @click="choose(r.item)">
+                <div class="code">{{ r.item.itemCode }}</div>
+                <div class="name">{{ r.item.stockName }}</div>
+                </div>
             </div>
-        </div>
         </div>
     </div>
 </template>
@@ -55,7 +55,7 @@ export default {
         });
 
         const url = (market, page) => {
-            return `/api/stocks/marketValue/${market}?page=${page}&pageSize=${state.stocks_pageSize}`
+            return `/naver_stock/api/stocks/marketValue/${market}?page=${page}&pageSize=${state.stocks_pageSize}`
         }
 
         const load_stocks = (market) => {
@@ -128,6 +128,7 @@ export default {
     box-sizing: border-box;
     height: 50px;
     position: relative;
+    z-index: 2;
 }
 
 .stockpicker.vcomp > .search_input > input {
@@ -177,6 +178,7 @@ export default {
     opacity: 0;
     pointer-events: none;
     transition: all 0.1s;
+    z-index: 1;
 }
 
 .stockpicker.vcomp.focused > .backdrop {
