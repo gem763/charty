@@ -33,5 +33,6 @@ import MasterFoot from './components/MasterFoot.vue';
   height: 100vh;
   width: 100%;
   box-sizing: border-box;
+  overflow: auto;
 }
 </style>
