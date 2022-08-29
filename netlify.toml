@@ -1,11 +1,11 @@
 [[redirects]]
-  from = "/proxy/naver_stock"
+  from = "/proxy/naver_stock/*"
   to = "https://m.stock.naver.com/:splat"
   status = 200
   force = true
 
 [[redirects]]
-  from = "/proxy/naver_trend"
+  from = "/proxy/naver_trend/*"
   to = "https://openapi.naver.com/:splat"
   status = 200
   force = true
