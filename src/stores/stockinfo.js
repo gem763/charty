@@ -3,6 +3,9 @@ import { ref, computed, watchEffect } from "vue";
 import _ from 'lodash'
 
 export const useStockinfoStore = defineStore('stockinfo', () => {
+    const naver_stock_api = process.env.VUE_APP_NAVER_STOCK_API;
+    const naver_trend_api = process.env.VUE_APP_NAVER_TREND_API;
+
     const name = ref('');
     const ticker = ref('');
     const keywords = ref([]);
@@ -36,10 +39,10 @@ export const useStockinfoStore = defineStore('stockinfo', () => {
     const url_stockprice = computed(() => {
         const _start = _date_format(startDate.value, 'yyyymmdd');
         const _end = _date_format(endDate.value, 'yyyymmdd');
-        return `/naver_stock/api/chart/domestic/item/${ticker.value}/day?startDateTime=${_start}&endDateTime=${_end}`
+        return `${naver_stock_api}/api/chart/domestic/item/${ticker.value}/day?startDateTime=${_start}&endDateTime=${_end}`
     })
 
-    const url_ntrend = ref('/naver_trend/v1/datalab/search');
+    const url_ntrend = ref(`${naver_trend_api}/v1/datalab/search`);
 
     const ntrend_rbody = computed(() => {
         return {

@@ -34,6 +34,7 @@ export default {
 
     setup() {
         const stockinfo = useStockinfoStore();
+        const naver_stock_api = process.env.VUE_APP_NAVER_STOCK_API;
 
         const state = reactive({
             status: '',
@@ -58,7 +59,7 @@ export default {
         });
 
         const url = (market, page) => {
-            return `/naver_stock/api/stocks/marketValue/${market}?page=${page}&pageSize=${state.stocks_pageSize}`
+            return `${naver_stock_api}/api/stocks/marketValue/${market}?page=${page}&pageSize=${state.stocks_pageSize}`
         }
 
         const load_stocks = (market) => {
