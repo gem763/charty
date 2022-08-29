@@ -9,7 +9,7 @@
         <div class="run" @click.stop="run">차트 불러오기</div>
 
         <div class="chart">
-            <div class="period">
+            <div class="period" v-if="state.prices.length > 0">
                 <span class="item" :class="on('3M')" @click="change_period('3M')">3M</span>
                 <span class="item" :class="on('6M')" @click="change_period('6M')">6M</span>
                 <span class="item" :class="on('1Y')" @click="change_period('1Y')">1Y</span>
@@ -29,18 +29,6 @@
                 :width="width"
                 :height="height"/>
 
-
-            <Line
-                v-if="ntrend.length > 0"
-                :chart-options="state.chartOptions"
-                :chart-data="state.chartData"
-                :chart-id="chartId"
-                :dataset-id-key="datasetIdKey"
-                :plugins="plugins"
-                :css-classes="cssClasses"
-                :styles="styles"
-                :width="width"
-                :height="height"/>
         </div>
     </div>
 </template>
@@ -53,9 +41,7 @@ import SearchKeywords from './SearchKeywords.vue';
 import { Line } from 'vue-chartjs'
 import { useStockinfoStore } from '@/stores/stockinfo'
 import { storeToRefs } from 'pinia'
-
-// import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
-// ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
+import 'chartjs-adapter-luxon'
 
 import {
     Chart as ChartJS,
@@ -66,6 +52,8 @@ import {
     LinearScale,
     PointElement,
     CategoryScale,
+    TimeScale,
+    TimeSeriesScale,
     // Plugin
 } from 'chart.js'
 
@@ -76,7 +64,9 @@ ChartJS.register(
     LineElement,
     LinearScale,
     PointElement,
-    CategoryScale
+    CategoryScale,
+    TimeScale,
+    TimeSeriesScale
 )
 
 
@@ -127,86 +117,13 @@ defineProps({
     }
 })
 
-// const get_ntrend = () => {
-//     // const api_url = 'https://openapi.naver.com/v1/datalab/search';
-
-//     // const request_body = {
-//     //     startDate: "2017-01-01",
-//     //     endDate: "2017-04-30",
-//     //     timeUnit: "week",
-//     //     keywordGroups: [
-//     //         {
-//     //             groupName: "삼성전자",
-//     //             keywords: [
-//     //                 "삼성전자",
-//     //                 "반도체"
-//     //             ]
-//     //         }
-//     //     ],
-//     //     // device: "pc",
-//     //     // ages: [
-//     //     //     "1",
-//     //     //     "2"
-//     //     // ],
-//     //     // gender: "f"
-//     // };
-
-//     fetch('/naver_trend/v1/datalab/search', {
-//         method: 'POST',
-//         headers: {
-//                     'X-Naver-Client-Id': process.env.VUE_APP_NAVER_CHARTKING_ID,
-//                     'X-Naver-Client-Secret': process.env.VUE_APP_NAVER_CHARTKING_SECRET,
-//                     'Content-Type': 'application/json'
-//                 },
-//         body: JSON.stringify(state.ntrend_request)
-//     }).then(x=>x.json()).then(console.log)
-// }
-
-
-// get_ntrend();
-
 const stockinfo = useStockinfoStore();
 const { prices, ntrend, period } = storeToRefs(stockinfo);
 
+
 const state = reactive({
-    // prices: prices,
+    prices: prices,
     ntrend: ntrend,
-
-    prices: [
-        {closePrice:100, localDate: '20220801'},
-        {closePrice:150, localDate: '20220802'},
-        {closePrice:120, localDate: '20220803'},
-        {closePrice:160, localDate: '20220804'}
-    ].map(o => {
-        const date = o.localDate;
-        const y = date.slice(0, 4);
-        const m = date.slice(4, 6);
-        const d = date.slice(6);
-        o.localDate = `${y}-${m}-${d}`;
-        // console.log(typeof(date));
-        return o
-    }),
-
-    // ntrend_request: {
-    //     startDate: "2017-01-01",
-    //     endDate: "2017-04-30",
-    //     timeUnit: "week",
-    //     keywordGroups: [
-    //         {
-    //             groupName: name,
-    //             keywords: [
-    //                 "삼성전자",
-    //                 "반도체"
-    //             ]
-    //         }
-    //     ],
-    //     // device: "pc",
-    //     // ages: [
-    //     //     "1",
-    //     //     "2"
-    //     // ],
-    //     // gender: "f"
-    // },
 
     chartData: computed(() => {
         return {
@@ -214,22 +131,25 @@ const state = reactive({
                 {
                     label: 'price',
                     data: state.prices,
-                    // data: prices,
                     parsing: {
                         xAxisKey: 'localDate',
                         yAxisKey: 'closePrice'
                     },
-                    borderColor: '#42d392',
+                    // borderColor: 'rgb(54, 162,235)',
+                    // borderColor: '#42d392',
+                    borderColor: '#212121',
+                    yAxisID: 'y1'
                 },
 
                 {
                     label: 'sentiment',
                     data: state.ntrend,
                     parsing: {
-                        xAxisKey: 'period',
+                        xAxisKey: 'localDate',
                         yAxisKey: 'ratio'
                     },
-                    borderColor: 'black',
+                    borderColor: '#42d392',
+                    yAxisID: 'y2'
                 }
             ]
         }
@@ -247,15 +167,27 @@ const state = reactive({
         tension: 0.1,
 
         scales: {
-            y: {
+            y1: {
                 display: false,
                 beginAtZero: false,
+                position: 'left',
                 // grid: { display: false },
                 // ticks: {display: false }
             },
-            x: {
+            y2: {
                 display: false,
-                grid: { display: false }
+                beginAtZero: false,
+                position: 'right',
+            },
+            x: {
+                // display: false,
+                // type: 'timeseries',
+                type: 'time',
+                grid: { display: false, drawBorder: false },
+                time: {
+                    unit: 'month',
+                    displayFormats: {'month':'yyyy.MM'}
+                },
             }
         },
         layout: {
@@ -272,7 +204,7 @@ const state = reactive({
                 //   color: 'red'
                 // },
                 position: 'top',
-                align: 'start',
+                align: 'center',
                 labels: {
                     boxHeight: 1,
                     boxWidth: 20,
@@ -294,15 +226,14 @@ const change_period = (p) => {
 }
 
 const run = () => {
-    // stockinfo.fetch_prices();
-    stockinfo.fetch_ntrend();
+    stockinfo.fetch_all();
 }
 </script>
 
 
 <style scoped>
 .charter.vcomp {
-    padding-top: 20px;
+    padding-top: 60px;
 }
 
 .charter.vcomp > .title {
@@ -316,6 +247,11 @@ const run = () => {
     -webkit-text-fill-color: transparent;
     letter-spacing: -1px;
     line-height: 32px;
+
+    text-align: left;
+    padding-left: 20px;
+    font-size: 35px;
+    margin: 0;
 }
 
 .charter.vcomp > .run {
@@ -362,6 +298,7 @@ const run = () => {
 .charter.vcomp > .chart > .container {
     width: 100%;
     /* background: rgba(0, 0, 0, 0.05); */
+    background: #f1f1f1;
     /* border-radius: 10px; */
     overflow: hidden;
 }

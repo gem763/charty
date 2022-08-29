@@ -9,9 +9,11 @@
   },
   "dependencies": {
     "chart.js": "^3.9.1",
+    "chartjs-adapter-luxon": "^1.2.0",
     "core-js": "^3.8.3",
     "fuse.js": "^6.6.2",
     "lodash": "^4.17.21",
+    "luxon": "^3.0.2",
     "node-polyfill-webpack-plugin": "^2.0.1",
     "pinia": "^2.0.20",
     "vue": "^3.2.37",

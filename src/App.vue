@@ -1,11 +1,13 @@
 <template>
   <MasterHead/>
   <Charter/>
+  <MasterFoot/>
 </template>
 
 <script setup>
 import MasterHead from './components/MasterHead.vue';
 import Charter from './components/Charter.vue';
+import MasterFoot from './components/MasterFoot.vue';
 
 // export default {
 //   name: 'App',

@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed, watchEffect } from "vue";
+import _ from 'lodash'
 
 export const useStockinfoStore = defineStore('stockinfo', () => {
     const name = ref('');
@@ -93,7 +94,7 @@ export const useStockinfoStore = defineStore('stockinfo', () => {
         return new Date(y, m + offset, d)
     }
 
-    function fetch_prices() {
+    async function fetch_prices() {
         if (!ticker.value || !startDate.value || !endDate.value) {
             return
         }
@@ -104,19 +105,19 @@ export const useStockinfoStore = defineStore('stockinfo', () => {
         //     prices.value = [] 
         // }
 
-        fetch(url_stockprice.value).then(x => x.json()).then(x => {
+        await fetch(url_stockprice.value).then(x => x.json()).then(x => {
             // prices.value.push(...x);
             prices.value = x;
         });
     }
 
-    function fetch_ntrend() {
+    async function fetch_ntrend() {
         if (!name.value || !keywords.value) {
             console.log(1111);
             return
         }
 
-        fetch(url_ntrend.value, {
+        await fetch(url_ntrend.value, {
             method: 'POST',
             headers: {
                 'X-Naver-Client-Id': process.env.VUE_APP_NAVER_CHARTKING_ID,
@@ -124,12 +125,22 @@ export const useStockinfoStore = defineStore('stockinfo', () => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(ntrend_rbody.value)
-        }).then(x=>x.json()).then(x => {
+
+        }).then(x => x.json()).then(x => {
             // console.log(x);
-            ntrend.value = x.results[0].data
+            ntrend.value = x.results[0].data.map(o => {
+                o.localDate = o.period.replace(/-/gi, '');
+                return o
+            });
         })
     }
 
+
+    async function fetch_all() {
+        await fetch_prices();
+        await fetch_ntrend();
+        ntrend.value = _.intersectionBy(ntrend.value, prices.value, 'localDate');
+    }
 
 
     watchEffect(async () => {
@@ -149,12 +160,14 @@ export const useStockinfoStore = defineStore('stockinfo', () => {
         remove_keyword, 
         fetch_prices,
         fetch_ntrend,
+        fetch_all,
         change_period,
         now,
         startDate,
         endDate,
         period,
         url_stockprice,
+        url_ntrend,
         ntrend_rbody
     }
 })

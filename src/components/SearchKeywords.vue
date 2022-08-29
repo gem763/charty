@@ -1,17 +1,19 @@
 <template>
     <div class="search-keywords">
+        <div class="subject"><strong><u>STEP 2</u></strong> 센티멘트 측정을 위한 네이버 검색어 추가하기</div>
+
         <div class="input">
             <input 
             v-model.trim="qry" 
             spellcheck="false"
-            placeholder="네이버 트랜드 검색어 입력하기" />
+            placeholder="네이버 검색어" />
 
             <div class="adder" @click="add_keyword">
                 <img src="../assets/plus.png">
             </div>
         </div>
 
-        <div class="keywords">
+        <div class="keywords" v-if="stockinfo.keywords.length > 0">
             <div class="word" v-for="(w, idx) in stockinfo.keywords" :key="idx">
                 {{ w }}
                 <div class="close" @click="remove_keyword(idx)">
@@ -47,13 +49,20 @@ const add_keyword = () => {
     padding-top: 20px;
 }
 
+.search-keywords > .subject {
+    text-align: left;
+    padding-left: 25px;
+    padding-bottom: 5px;
+    font-size: 13px;
+}
+
 .search-keywords > .keywords {
     width: 100%;
     /* background: rgba(0, 0, 0, 0.1); */
     padding: 20px;
     box-sizing: border-box;
     text-align: left;
-    font-size: 15px;
+    font-size: 13px;
     color: black;
 }
 

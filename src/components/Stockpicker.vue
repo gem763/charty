@@ -1,6 +1,9 @@
 <template>
     <div class="stockpicker vcomp" :class="state.status">
         <div class="backdrop" @click.stop="focused(false)"></div>
+
+        <div class="subject"><strong><u>STEP 1</u></strong> 관심종목 입력하기</div>
+
         <div class="search_input">
             <input 
                 v-model.trim="state.qry" 
@@ -37,13 +40,13 @@ export default {
             qry: '',
             stocks_pageSize: 60,
             stocks: [
-                {itemCode: '005930', stockName: '삼성전자'},
-                {itemCode: '373220', stockName: 'LG에너지솔루션'},
-                {itemCode: '000660', stockName: 'SK하이닉스'},
-                {itemCode: '207940', stockName: '삼성바이오로직스'},
-                {itemCode: '005935', stockName: '삼성전자우'},
-                {itemCode: '051910', stockName: 'LG화학'},
-                {itemCode: '035420', stockName: 'NAVER'},
+                // {itemCode: '005930', stockName: '삼성전자'},
+                // {itemCode: '373220', stockName: 'LG에너지솔루션'},
+                // {itemCode: '000660', stockName: 'SK하이닉스'},
+                // {itemCode: '207940', stockName: '삼성바이오로직스'},
+                // {itemCode: '005935', stockName: '삼성전자우'},
+                // {itemCode: '051910', stockName: 'LG화학'},
+                // {itemCode: '035420', stockName: 'NAVER'},
             ],
             search_keys: ["itemCode", "stockName"],
             searcher: computed(() => new Fuse(state.stocks, { 
@@ -101,8 +104,8 @@ export default {
 
         const debounced_search = debounce(search, 500);
 
-        // load_stocks('KOSPI');
-        // load_stocks('KOSDAQ');
+        load_stocks('KOSPI');
+        load_stocks('KOSDAQ');
 
         return {
             state,
@@ -118,8 +121,15 @@ export default {
 
 <style scoped>
 .stockpicker.vcomp {
-    /* padding-top: 20px; */
+    padding-top: 40px;
     width: 100%;
+}
+
+.stockpicker.vcomp > .subject {
+    text-align: left;
+    padding-left: 25px;
+    padding-bottom: 5px;
+    font-size: 13px;
 }
 
 .stockpicker.vcomp > .search_input {
